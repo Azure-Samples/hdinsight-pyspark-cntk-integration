@@ -98,18 +98,6 @@ local_cifar_path = os.path.join(local_tmp_dir, os.path.basename(cifar_uri))
 local_model_path = os.path.join(local_tmp_dir, 'model.dnn')
 local_mean_image_path = os.path.join(local_tmp_dir, 'mean_image.xml')
 os.makedirs(local_tmp_dir, exist_ok=True)
-```
-
-    Starting Spark application
-
-
-
-<table>
-<tr><th>ID</th><th>YARN Application ID</th><th>Kind</th><th>State</th><th>Spark UI</th><th>Driver log</th><th>Current session?</th></tr><tr><td>82</td><td>application_1487295827042_0089</td><td>pyspark3</td><td>idle</td><td><a target="_blank" href="http://hn1-amlmod.af5mdcuymb3u5lldwhqx4wewle.bx.internal.cloudapp.net:8088/proxy/application_1487295827042_0089/">Link</a></td><td><a target="_blank" href="http://10.0.0.9:30060/node/containerlogs/container_1487295827042_0089_01_000001/livy">Link</a></td><td>✔</td></tr></table>
-
-
-    SparkSession available as 'spark'.
-
 
 <a name="tarball"></a>
 ### Download the dataset locally on the Spark cluster
