@@ -48,6 +48,7 @@ Cluster deployment will take approximately twenty minutes.
 ### Run a Script Action to install CNTK and Python packages
 
 After HDInsight cluster deployment finishes, run a script action to install CNTK as follows:
+
 1. Click on the "Search Resources" magnifying glass icon along the top bar of [Azure Portal](https://ms.portal.azure.com).
 1. Type in the name of your HDInsight cluster and click on its entry in the resulting drop-down list. The overview pane for your HDInsight cluster will appear.
 1. In the search field at upper left, type in "Script actions". Click the "Script actions" option in the results list.
@@ -95,12 +96,12 @@ local_cifar_path = os.path.join(local_tmp_dir, os.path.basename(cifar_uri))
 local_model_path = os.path.join(local_tmp_dir, 'model.dnn')
 local_mean_image_path = os.path.join(local_tmp_dir, 'mean_image.xml')
 os.makedirs(local_tmp_dir, exist_ok=True)
+```
 
 <a name="tarball"></a>
 ### Download the dataset locally on the Spark cluster
 
 The image data are `ndarray`s stored in a Python `dict` which has been pickled and tarballed. The cell below downloads the tarball and extracts the `dict` containing the test image data.
-
 
 ```python
 if not os.path.exists(local_cifar_path):
@@ -127,7 +128,6 @@ image_rdd = image_rdd.coalesce(n_workers)
 ```
 
 To convince ourselves that the data has been properly loaded, let's visualize a few of these images. For plotting, we will need to transfer them to the local context by way of a Spark dataframe:
-
 
 ```python
 sample_images = image_rdd.take(5)
