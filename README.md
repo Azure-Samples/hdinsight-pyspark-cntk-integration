@@ -48,6 +48,7 @@ Cluster deployment will take approximately twenty minutes.
 ### Run a Script Action to install CNTK and Python packages
 
 After HDInsight cluster deployment finishes, run a script action to install CNTK as follows:
+
 1. Click on the "Search Resources" magnifying glass icon along the top bar of [Azure Portal](https://ms.portal.azure.com).
 1. Type in the name of your HDInsight cluster and click on its entry in the resulting drop-down list. The overview pane for your HDInsight cluster will appear.
 1. In the search field at upper left, type in "Script actions". Click the "Script actions" option in the results list.
@@ -74,10 +75,7 @@ We will now use Python to obtain the [CIFAR-10](https://www.cs.toronto.edu/~kriz
 <a name="imports"></a>
 ### Load modules and define presets
 
-Execute the cell below by selecting it with the mouse or arrow keys, then pressing Shift+Enter.
-
-
-```pyspark3
+```python
 from cntk import load_model
 import os
 import numpy as np
@@ -98,14 +96,14 @@ local_cifar_path = os.path.join(local_tmp_dir, os.path.basename(cifar_uri))
 local_model_path = os.path.join(local_tmp_dir, 'model.dnn')
 local_mean_image_path = os.path.join(local_tmp_dir, 'mean_image.xml')
 os.makedirs(local_tmp_dir, exist_ok=True)
+```
 
 <a name="tarball"></a>
 ### Download the dataset locally on the Spark cluster
 
 The image data are `ndarray`s stored in a Python `dict` which has been pickled and tarballed. The cell below downloads the tarball and extracts the `dict` containing the test image data.
 
-
-```pyspark3
+```python
 if not os.path.exists(local_cifar_path):
     urlretrieve(cifar_uri, filename=local_cifar_path)
 
@@ -119,7 +117,7 @@ with tarfile.open(local_cifar_path, 'r:gz') as f:
 The following code cell illustrates how the collection of images can be distributed to create a Spark RDD. The cell creates an RDD with one partition per worker to limit the number of times that the trained model must be reloaded during scoring.
 
 
-```pyspark3
+```python
 def reshape_image(record):
     image, label, filename = record
     return image.reshape(3,32,32).transpose(1,2,0), label, filename
@@ -131,8 +129,7 @@ image_rdd = image_rdd.coalesce(n_workers)
 
 To convince ourselves that the data has been properly loaded, let's visualize a few of these images. For plotting, we will need to transfer them to the local context by way of a Spark dataframe:
 
-
-```pyspark3
+```python
 sample_images = image_rdd.take(5)
 image_data = np.array([i[0].reshape((32*32*3)) for i in sample_images]).T
 image_labels = [i[2] for i in sample_images]
@@ -141,7 +138,7 @@ spark.createDataFrame(image_df).coalesce(1).write.mode("overwrite").csv("/tmp/ci
 ```
 
 
-```pyspark3
+```python
 %%local
 import pandas as pd
 import numpy as np
@@ -178,7 +175,7 @@ Now that the cluster and sample dataset have been created, we can use PySpark to
 We previously trained a twenty-layer ResNet model to classify CIFAR-10 images by following [this tutorial](https://github.com/Microsoft/CNTK/tree/master/Examples/Image/Classification/ResNet) from the CNTK git repo. The model expects input images to be preprocessed by subtracting the mean image defined in an OpenCV XML file. The following cell downloads both the trained model and the mean image, and ensures that data from both files can be accessed by worker nodes.
 
 
-```pyspark3
+```python
 urlretrieve(model_uri, local_model_path)
 sc.addFile(local_model_path)
 
@@ -195,7 +192,7 @@ mean_image_bc = sc.broadcast(mean_image)
 The following functions will be used during scoring to load, preprocess, and score images. A class label (integer in the range 0-9) will be returned for each image, along with its filename.
 
 
-```pyspark3
+```python
 def get_preprocessed_image(my_image, mean_image):
     ''' Reshape and flip RGB order '''
     my_image = my_image.astype(np.float32)
@@ -225,7 +222,7 @@ def run_worker(records):
 The code cell below maps each partition of `image_rdd` to a worker node and collects the results. Runtimes of 1-3 minutes are typical.
 
 
-```pyspark3
+```python
 labelled_images = image_rdd.mapPartitions(run_worker)
 
 # Time how long it takes to score 10k test images
@@ -245,7 +242,7 @@ print(stop - start)
 The trained model assigns a class label (represented by an integer value 0-9) to each image. We now compare the true and predicted class labels to evaluate our model's accuracy.
 
 
-```pyspark3
+```python
 df = pd.DataFrame(results, columns=['true_label', 'predicted_label'])
 
 num_correct = sum(df['true_label'] == df['predicted_label'])
@@ -258,12 +255,12 @@ print('Correctly predicted {} of {} images ({:0.2f}%)'.format(num_correct, num_t
 We can construct a confusion matrix to visualize which classification errors are most common:
 
 
-```pyspark3
+```python
 spark.createDataFrame(df).coalesce(1).write.mode("overwrite").csv("/tmp/cifar_scores", header=True) 
 ```
 
 
-```pyspark3
+```python
 %%local
 import pandas as pd
 import numpy as np
