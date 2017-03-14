@@ -47,13 +47,12 @@ if [ "${fullHostName,,}" != "${PRIMARYHEADNODE,,}" ]; then
 fi
 
 #Constants needed for changing ambari configs
-AMBARICONFIGS_PY="/var/lib/ambari-server/resources/scripts/configs.py"
+AMBARICONFIGS_SH="/var/lib/ambari-server/resources/scripts/configs.sh"
 ACTIVEAMBARIHOST=headnodehost
 PORT=8080
 USERID=$(echo -e "import hdinsight_common.Constants as Constants\nprint Constants.AMBARI_WATCHDOG_USERNAME" | python)
 PASSWD=$(echo -e "import hdinsight_common.ClusterManifestParser as ClusterManifestParser\nimport hdinsight_common.Constants as Constants\nimport base64\nbase64pwd = ClusterManifestParser.parse_local_manifest().ambari_users.usersmap[Constants.AMBARI_WATCHDOG_USERNAME].password\nprint base64.b64decode(base64pwd)" | python)
 CLUSTERNAME=$(echo -e "import hdinsight_common.ClusterManifestParser as ClusterManifestParser\nprint ClusterManifestParser.parse_local_manifest().deployment.cluster_name" | python)
-PROTOCOL="HTTP"
 ACTION="set"
 CONFIG_TYPE="spark2-defaults"
 CONFIG_NAME="spark.yarn.appMasterEnv.PYSPARK3_PYTHON"
@@ -88,7 +87,7 @@ startServiceViaRest() {
 }
 
 #Set new value for Pyspark 3 environment
-$AMBARICONFIGS_PY $USERID $PASSWD $PORT $PROTOCOL $ACTION $ACTIVEAMBARIHOST $CLUSTERNAME $CONFIG_TYPE $CONFIG_NAME $CONFIG_VALUE
+$AMBARICONFIGS_SH -u $USERID -p $PASSWD -port $PORT $ACTION $ACTIVEAMBARIHOST $CLUSTERNAME $CONFIG_TYPE $CONFIG_NAME $CONFIG_VALUE
 
 #Stop affected services service
 stopServiceViaRest SPARK2
