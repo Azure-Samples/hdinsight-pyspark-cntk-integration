@@ -3,17 +3,14 @@
 
 by Miruna Oprescu, Sudarshan Raghunathan, and Mary Wahl, 2017
 
-This notebook demonstrates how a trained [Microsoft Cognitive Toolkit](https://github.com/Microsoft/CNTK/wiki) deep learning model can be applied to files in an [Azure Blob Storage Account](https://azure.microsoft.com/en-us/services/storage/blobs/) in a distributed and scalable fashion using the [Spark Python API](http://spark.apache.org/docs/0.9.0/python-programming-guide.html) (PySpark) on a Microsoft Azure HDInsight cluster. An image classification model pretrained on the [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar.html) dataset is applied to 10,000 withheld images. A sample of the images is shown below along with their classes:
+This notebook demonstrates how a trained [Microsoft Cognitive Toolkit (CNTK)](https://github.com/Microsoft/CNTK/wiki) deep learning model can be applied to files in an [Azure Blob Storage Account](https://azure.microsoft.com/en-us/services/storage/blobs/) in a distributed and scalable fashion using the [Spark Python API](http://spark.apache.org/docs/0.9.0/python-programming-guide.html) (PySpark) on a Microsoft Azure HDInsight cluster. An image classification model pretrained on the [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar.html) dataset is applied to 10,000 withheld images. A sample of the images is shown below along with their classes:
 
 <img src="https://cntk.ai/jup/201/cifar-10.png" width=500 height=500>
 
 To begin, follow the instructions below to set up a cluster and storage account. You will be prompted to upload a copy of this notebook to the cluster, where you can continue following the walkthrough by executing the PySpark code cells.
 
 ### Outline
-- [Set up the HDInsight Spark cluster and storage account](#setup)
-   - [Deploy the HDInsight Spark cluster and storage account](#deploy)
-   - [Run a Script Action to install CNTK and Python packages](#scriptaction)
-   - [Load the Jupyter Notebook](#jupyter)
+- [Install CNTK on an HDInsight Spark cluster and upload the example Jupyter Notebook](#setup)
 - [Load sample images into a Spark Resiliant Distributed Dataset or RDD](#images)
    - [Load modules and define presets](#imports)
    - [Download the dataset locally on the Spark cluster](#tarball)
@@ -25,47 +22,10 @@ To begin, follow the instructions below to set up a cluster and storage account.
    - [Evaluate model accuracy](#evaluate)
 
 <a name="setup"></a>
-## Set up the HDInsight Spark cluster and storage account
-<a name="deploy"></a>
-### Deploy the HDInsight Spark cluster and storage account
+## Install CNTK on an HDInsight Spark cluster and upload the example Jupyter Notebook
 
-1. After logging into [Azure Portal](https://ms.portal.azure.com), click the "+ New" button near the upper left to create a new resource. Search for and select the "HDInsight" option published by Microsoft.
-1. In the "Basics" pane of the "Quick Create" window:
-   1. Choose a unique cluster name and your preferred subscription.
-   1. Click "Cluster Type" to load a panel of options.
-       1. Set the cluster type to "Spark".
-       1. Set the verion to "Spark 2.0.2 (HDI 3.5)".
-       1. Click the "Select" button to save your selections.
-   1. Choose your login information, resource group, and cluster location.
-   1. Click "Next" to continue.
-1. In the "Storage" pane, leave all settings at their default values to automatically create a storage account for your cluster. Click "Next" to continue.
-1. In the "Summary" pane, you may edit the cluster size to change the number and size of nodes if desired. The default settings will be sufficient for this tutorial.
-1. After reviewing your choices, click "Create".
-
-Cluster deployment will take approximately twenty minutes.
-
-<a name="scriptaction"></a>
-### Run a Script Action to install CNTK and Python packages
-
-After HDInsight cluster deployment finishes, run a script action to install CNTK as follows:
-
-1. Click on the "Search Resources" magnifying glass icon along the top bar of [Azure Portal](https://ms.portal.azure.com).
-1. Type in the name of your HDInsight cluster and click on its entry in the resulting drop-down list. The overview pane for your HDInsight cluster will appear.
-1. In the search field at upper left, type in "Script actions". Click the "Script actions" option in the results list.
-1. Click the "+ Submit new" button along the top of the Script Actions pane. A new pane of options will appear.
-   1. Under name, type "install" (without the quotes).
-   1. Under "Bash script URI", type the following: [https://raw.githubusercontent.com/Azure-Samples/hdinsight-pyspark-cntk-integration/master/cntk-install.sh](https://raw.githubusercontent.com/Azure-Samples/hdinsight-pyspark-cntk-integration/master/cntk-install.sh)
-   1. Ensure that "Head" and "Worker" boxes are checked.
-   1. Click the "Create" button along the bottom of the pane.
-
-The script action will now execute automatically on the head and worker nodes. CNTK will be installed, creating a new `cntk-py35` environment. The script action has completed when its icon in the "Script action history" changes from blue to a green check mark. Expect this script to take 10-15 minutes to run.
-
-<a name="jupyter"></a>
-### Load the Jupyter Notebook
-
-1. From the pane of dashboard options described above, click on "Jupyter Notebooks". Provide your admin username and password if prompted.
-1. Click the "Upload" button at upper-right and upload a copy of this Jupyter notebook. Confirm the file name.
-1. After uploading, click the file name to open the Notebook and continue from this section.
+Follow the instructions in the [Azure Documentation](https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-apache-spark-microsoft-cognitive-toolkit) to 
+get your HDInsight cluster ready and upload the Jupyter Notebook. The steps below are covered in the Jupyter Notebook itself.
 
 <a name="images"></a>
 ## Load sample images into a Spark Resiliant Distributed Dataset or RDD
