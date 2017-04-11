@@ -3,7 +3,7 @@
 
 by Miruna Oprescu, Sudarshan Raghunathan, and Mary Wahl, 2017
 
-This notebook demonstrates how a trained [Microsoft Cognitive Toolkit (CNTK)](https://github.com/Microsoft/CNTK/wiki) deep learning model can be applied to files in an [Azure Blob Storage Account](https://azure.microsoft.com/en-us/services/storage/blobs/) in a distributed and scalable fashion using the [Spark Python API](http://spark.apache.org/docs/0.9.0/python-programming-guide.html) (PySpark) on a Microsoft Azure HDInsight cluster. An image classification model pretrained on the [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar.html) dataset is applied to 10,000 withheld images. A sample of the images is shown below along with their classes:
+This notebook demonstrates how a trained [Microsoft Cognitive Toolkit (CNTK)](https://github.com/Microsoft/CNTK/wiki) deep learning model can be applied to files in an [Azure Blob Storage Account](https://azure.microsoft.com/en-us/services/storage/blobs/) in a distributed and scalable fashion using the [Spark Python API](http://spark.apache.org/docs/2.1.0/programming-guide.html) (PySpark) on a Microsoft Azure HDInsight cluster. An image classification model pretrained on the [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar.html) dataset is applied to 10,000 withheld images. A sample of the images is shown below along with their classes:
 
 <img src="https://cntk.ai/jup/201/cifar-10.png" width=500 height=500>
 
@@ -50,7 +50,6 @@ import xml.etree.ElementTree
 cifar_uri = 'http://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz' # Location of test image dataset
 mean_image_uri = 'https://raw.githubusercontent.com/Azure-Samples/hdinsight-pyspark-cntk-integration/master/CIFAR-10_mean.xml' # Mean image for subtraction
 model_uri = 'https://github.com/Azure-Samples/hdinsight-pyspark-cntk-integration/raw/master/resnet20_meanimage_159.dnn' # Location of trained model
-n_workers = 4
 local_tmp_dir = '/tmp/cifar'
 local_cifar_path = os.path.join(local_tmp_dir, os.path.basename(cifar_uri))
 local_model_path = os.path.join(local_tmp_dir, 'model.dnn')
@@ -84,7 +83,6 @@ def reshape_image(record):
 
 image_rdd = sc.parallelize(zip(test_dict['data'], test_dict['labels'], test_dict['filenames']))
 image_rdd = image_rdd.map(reshape_image)
-image_rdd = image_rdd.coalesce(n_workers)
 ```
 
 To convince ourselves that the data has been properly loaded, let's visualize a few of these images. For plotting, we will need to transfer them to the local context by way of a Spark dataframe:
