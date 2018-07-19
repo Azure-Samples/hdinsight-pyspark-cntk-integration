@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # Install CNTK on every node. Skip if CNTK latest version is already installed
-CNTK_VER="2.0.beta12.0"
+CNTK_VER="2.0"
 CNTK_BASE_URL="https://cntk.ai/PythonWheel/CPU-Only"
 CNTK_PY27_WHEEL="cntk-$CNTK_VER-cp27-cp27mu-linux_x86_64.whl"
 CNTK_PY35_WHEEL="cntk-$CNTK_VER-cp35-cp35m-linux_x86_64.whl"
